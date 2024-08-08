@@ -10,6 +10,18 @@
         <label for="description">Descrição:</label>
         <textarea id="description" v-model="description" required></textarea>
       </div>
+      <div>
+        <label for="status">Status:</label>
+        <input type="text" id="status" v-model="status" required>
+      </div>
+      <div>
+        <label for="dataAbertura">Data de Abertura:</label>
+        <input type="datetime-local" id="dataAbertura" v-model="dataAbertura" required>
+      </div>
+      <div>
+        <label for="usuarioId">ID do Usuário:</label>
+        <input type="number" id="usuarioId" v-model="usuarioId" required>
+      </div>
       <button type="submit">Criar Chamado</button>
     </form>
   </div>
@@ -24,6 +36,9 @@ export default {
     return {
       title: '',
       description: '',
+      status: '',
+      dataAbertura: '',
+      usuarioId: ''
     };
   },
   methods: {
@@ -32,10 +47,16 @@ export default {
         const newChamado = {
           title: this.title,
           description: this.description,
+          status: this.status,
+          dataAbertura: new Date(this.dataAbertura).toISOString(),
+          usuarioId: this.usuarioId
         };
         await api.post('/chamados', newChamado);
         this.title = '';
         this.description = '';
+        this.status = '';
+        this.dataAbertura = '';
+        this.usuarioId = '';
         alert('Chamado criado com sucesso!');
       } catch (error) {
         console.error('Error creating chamado:', error);

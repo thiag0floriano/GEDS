@@ -25,10 +25,12 @@ export default {
   methods: {
     async fetchChamados() {
       try {
+        console.log('Fetching chamados with token:', localStorage.getItem('token'));
         const response = await api.get('/chamados');
         this.chamados = response.data;
       } catch (error) {
         console.error('Error fetching chamados:', error);
+        alert('Failed to fetch chamados. Please check the console for details.');
       }
     },
   },
