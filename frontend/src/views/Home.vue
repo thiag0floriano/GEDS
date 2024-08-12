@@ -11,6 +11,7 @@
 
 <script>
 import api from '../services/api';
+import auth from '../services/auth'; // Ajuste o caminho para o arquivo auth.js
 
 export default {
   name: 'HomePage',
@@ -20,12 +21,16 @@ export default {
     };
   },
   created() {
-    this.fetchChamados();
+    if (auth.checkToken()) {
+      this.fetchChamados();
+    } else {
+      // O token está expirado, redireciona para a página de login
+      this.$router.push('/login');
+    }
   },
   methods: {
     async fetchChamados() {
       try {
-        console.log('Fetching chamados with token:', localStorage.getItem('token'));
         const response = await api.get('/chamados');
         this.chamados = response.data;
       } catch (error) {

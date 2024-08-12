@@ -21,7 +21,8 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).send({ message: 'Invalid username or password' });
     }
-    const token = jwt.sign({ userId: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id }, 'your_jwt_secret', { expiresIn: '1h' }); // Expira em 1 hora
+    console.log('Token generated:', token); // Adicione este log
     res.send({ token });
   } catch (err) {
     res.status(400).send(err);
