@@ -2,11 +2,11 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Chamado = sequelize.define('Chamado', {
-    title: {
+    titulo: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
+    descricao: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -14,7 +14,11 @@ const Chamado = sequelize.define('Chamado', {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    dataAbertura: {
+    data_abertura: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    data_fechamento: {
       type: DataTypes.DATE,
       allowNull: true,
     },
