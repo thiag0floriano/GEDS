@@ -12,16 +12,17 @@ const authenticate = (req, res, next) => {
   if (!token) return res.status(401).send({ message: 'Token is missing' });
 
   try {
-    console.log('Token received:', token); // Linha corrigida para depuração
-    const decoded = jwt.verify(token, 'your_jwt_secret'); // Certifique-se de usar o mesmo segredo
+    console.log('Token received:', token); // Linha depuração
+    const decoded = jwt.verify(token, 'your_jwt_secret'); // usar o mesmo segredo
     req.user = decoded;
     next();
   } catch (err) {
-    console.error('Token verification failed:', err); // Linha para depuração
+    console.error('Token verification failed:', err); // Linha depuração
     res.status(401).send({ message: 'Invalid token' });
   }
 };
 
+// Rota para obter chamados
 router.get('/', authenticate, async (req, res) => {
   try {
     const chamados = await Chamado.findAll();
@@ -32,6 +33,7 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+// Rota para criar um chamado
 router.post('/', authenticate, async (req, res) => {
   try {
     const chamado = await Chamado.create(req.body);
@@ -39,6 +41,33 @@ router.post('/', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Erro ao criar chamado:', error);
     res.status(500).send({ error: 'Erro ao criar chamado' });
+  }
+});
+
+// Rota para atualizar um chamado existente
+router.put('/:id', async (req, res) => {
+  try {
+    const chamadoId = req.params.id;
+    const { title, description, status, dataAbertura, usuarioId } = req.body;
+
+    const chamado = await Chamado.findByPk(chamadoId);
+    if (!chamado) {
+      return res.status(404).json({ error: 'Chamado não encontrado' });
+    }
+
+    // Atualiza os campos do chamado
+    await chamado.update({
+      title,
+      description,
+      status,
+      dataAbertura,
+      usuarioId
+    });
+
+    res.json({ message: 'Chamado atualizado com sucesso', chamado });
+  } catch (error) {
+    console.error('Erro ao atualizar chamado:', error);
+    res.status(500).json({ error: 'Erro ao atualizar chamado' });
   }
 });
 
