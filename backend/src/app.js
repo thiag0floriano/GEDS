@@ -13,7 +13,7 @@ sequelize.sync().then(() => {
   console.log('Database connected and models synchronized');
 });
 
-app.use(cors({ origin: 'http://localhost:8080' }));
+app.use(cors({ origin: 'http://localhost:8081' }));
 app.use(bodyParser.json());
 app.use('/api/chamados', chamadoRoutes);
 app.use('/api/auth', authRoutes);

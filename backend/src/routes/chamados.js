@@ -33,6 +33,23 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+// Rota para obter um chamado específico pelo ID
+router.get('/:id', authenticate, async (req, res) => {
+  try {
+    const chamadoId = req.params.id;
+    const chamado = await Chamado.findByPk(chamadoId);
+
+    if (!chamado) {
+      return res.status(404).json({ error: 'Chamado não encontrado' });
+    }
+
+    res.json(chamado);
+  } catch (error) {
+    console.error('Erro ao obter o chamado:', error);
+    res.status(500).json({ error: 'Erro ao obter o chamado' });
+  }
+});
+
 // Rota para criar um chamado
 router.post('/', authenticate, async (req, res) => {
   try {
@@ -48,7 +65,7 @@ router.post('/', authenticate, async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const chamadoId = req.params.id;
-    const { title, description, status, dataAbertura, usuarioId } = req.body;
+    const { titulo, descricao, status, data_abertura, data_fechamento, usuarioId } = req.body;
 
     const chamado = await Chamado.findByPk(chamadoId);
     if (!chamado) {
@@ -57,10 +74,11 @@ router.put('/:id', async (req, res) => {
 
     // Atualiza os campos do chamado
     await chamado.update({
-      title,
-      description,
+      titulo,
+      descricao,
       status,
-      dataAbertura,
+      data_abertura,
+      data_fechamento,
       usuarioId
     });
 
