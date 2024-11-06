@@ -3,10 +3,12 @@ import Home from '../views/Home.vue';
 import Chamados from '../views/Chamados.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import Tarefas from '../views/Tarefas.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/chamados/:id?', name: 'Chamados', component: Chamados },
+  { path: '/tarefas', name: 'Tarefas', component: Tarefas },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
 ];
