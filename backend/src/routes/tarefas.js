@@ -1,6 +1,7 @@
 const express = require('express');
 const Tarefa = require('../models/Tarefa');
 const router = express.Router();
+//const { Tarefa } = require('../models');
 
 // Rota para criar uma tarefa
 router.post('/', async (req, res) => {
@@ -47,6 +48,26 @@ router.delete('/:id', async (req, res) => {
     res.status(204).end();
   } catch (error) {
     res.status(500).json({ error: 'Erro ao deletar tarefa' });
+  }
+});
+
+// Atribuir usuário a uma tarefa
+router.put('/:id/atribuir-usuario', async (req, res) => {
+  const { id } = req.params;
+  const { usuarioId } = req.body;
+
+  try {
+    const tarefa = await Tarefa.findByPk(id);
+    if (!tarefa) {
+      return res.status(404).json({ error: 'Tarefa não encontrada' });
+    }
+
+    tarefa.usuarioId = usuarioId;
+    await tarefa.save();
+
+    res.json(tarefa);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atribuir usuário à tarefa' });
   }
 });
 

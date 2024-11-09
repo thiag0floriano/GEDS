@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Chamado = require('../models/Chamado');
+const Tarefa = require('../models/Tarefa');
+//const authenticate = require('../middlewares/authenticate');
 
 const router = express.Router();
 
@@ -86,6 +88,62 @@ router.put('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao atualizar chamado:', error);
     res.status(500).json({ error: 'Erro ao atualizar chamado' });
+  }
+});
+
+// Listar tarefas de um chamado específico
+router.get('/:chamadoId/tarefas', authenticate, async (req, res) => {
+  const { chamadoId } = req.params;
+  try {
+    const tarefas = await Tarefa.findAll({ where: { chamadoId } });
+    res.json(tarefas);
+  } catch (error) {
+    console.error('Erro ao obter tarefas:', error);
+    res.status(500).json({ error: 'Erro ao obter tarefas' });
+  }
+});
+
+// Criar uma nova tarefa para um chamado específico
+router.post('/:chamadoId/tarefas', authenticate, async (req, res) => {
+  const { chamadoId } = req.params;
+  const { titulo, descricao, status, usuarioId } = req.body;
+  try {
+    const tarefa = await Tarefa.create({ titulo, descricao, status, usuarioId, chamadoId });
+    res.status(201).json(tarefa);
+  } catch (error) {
+    console.error('Erro ao criar tarefa:', error);
+    res.status(500).json({ error: 'Erro ao criar tarefa' });
+  }
+});
+
+// Atualizar uma tarefa específica de um chamado
+router.put('/tarefas/:id', authenticate, async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descricao, status } = req.body;
+  try {
+    const tarefa = await Tarefa.findByPk(id);
+    if (!tarefa) return res.status(404).json({ error: 'Tarefa não encontrada' });
+
+    await tarefa.update({ titulo, descricao, status });
+    res.json(tarefa);
+  } catch (error) {
+    console.error('Erro ao atualizar tarefa:', error);
+    res.status(500).json({ error: 'Erro ao atualizar tarefa' });
+  }
+});
+
+// Excluir uma tarefa específica de um chamado
+router.delete('/tarefas/:id', authenticate, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const tarefa = await Tarefa.findByPk(id);
+    if (!tarefa) return res.status(404).json({ error: 'Tarefa não encontrada' });
+
+    await tarefa.destroy();
+    res.json({ message: 'Tarefa excluída com sucesso' });
+  } catch (error) {
+    console.error('Erro ao excluir tarefa:', error);
+    res.status(500).json({ error: 'Erro ao excluir tarefa' });
   }
 });
 
