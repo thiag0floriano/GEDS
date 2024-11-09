@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Mensagem = require('../models/Mensagem');
 const { User } = require('../models/User');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 // Rota para obter todas as mensagens de um chamado específico
 router.get('/:chamadoId', async (req, res) => {
@@ -19,7 +20,7 @@ router.get('/:chamadoId', async (req, res) => {
 });
 
 // Rota para enviar uma nova mensagem para um chamado
-router.post('/:chamadoId', async (req, res) => {
+router.post('/:chamadoId', authenticateToken, async (req, res) => {
   const { conteudo } = req.body;
   const { chamadoId } = req.params;
   const usuarioId = req.user.id; // Presume-se que o ID do usuário esteja disponível após autenticação
