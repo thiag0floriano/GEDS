@@ -2,7 +2,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const Chamado = require('../models/Chamado');
 const Tarefa = require('../models/Tarefa');
-//const authenticate = require('../middlewares/authenticate');
 
 const router = express.Router();
 

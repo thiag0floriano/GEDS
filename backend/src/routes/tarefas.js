@@ -1,7 +1,6 @@
 const express = require('express');
 const Tarefa = require('../models/Tarefa');
 const router = express.Router();
-//const { Tarefa } = require('../models');
 
 // Rota para criar uma tarefa
 router.post('/', async (req, res) => {

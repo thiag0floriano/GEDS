@@ -268,7 +268,6 @@ export default {
     </form>
 
     <h2>Tarefas do Chamado</h2>
-    <!-- Verifica se tarefas está definido e se há elementos no array -->
     <ul v-if="tarefas && tarefas.length">
       <li v-for="tarefa in tarefas" :key="tarefa.id">
         <h3>{{ tarefa.titulo }}</h3>
@@ -304,7 +303,7 @@ export default {
     <div v-if="mensagens.length">
       <ul>
         <li v-for="mensagem in mensagens" :key="mensagem.id">
-          <strong>{{ mensagem.User.username }}:</strong>
+          <strong>{{ mensagem.User ? mensagem.User.username : 'Usuário desconhecido' }}:</strong>
           <span>{{ mensagem.conteudo }}</span>
           <small>{{ new Date(mensagem.data_envio).toLocaleString() }}</small>
         </li>
@@ -340,9 +339,9 @@ export default {
       data_fechamento: '',
       tituloTarefa: '',
       descricaoTarefa: '',
-      usuarioIdTarefa: '', // Novo campo para o ID do usuário na tarefa
+      usuarioIdTarefa: '',
       tarefas: [],
-      usuarios: [], // Armazena os usuários disponíveis
+      usuarios: [],
       mensagens: [],
       novaMensagem: '',
     };
@@ -378,7 +377,7 @@ export default {
           this.status = chamado.status;
           this.data_abertura = chamado.data_abertura ? chamado.data_abertura.slice(0, 16) : '';
           this.data_fechamento = chamado.data_fechamento ? chamado.data_fechamento.slice(0, 16) : '';
-          this.tarefas = chamado.tarefas || []; // Garante que tarefas é um array
+          this.tarefas = chamado.tarefas || [];
         } catch (error) {
           console.error('Erro ao carregar chamado:', error);
           alert('Erro ao carregar chamado');
@@ -419,7 +418,7 @@ export default {
           console.error('Erro ao carregar tarefas:', error);
         }
       } else {
-        this.tarefas = []; // Limpar tarefas ao criar um novo chamado
+        this.tarefas = [];
       }
     },
     async adicionarTarefa() {
@@ -428,12 +427,12 @@ export default {
           titulo: this.tituloTarefa,
           descricao: this.descricaoTarefa,
           status: 'pendente',
-          usuarioId: this.usuarioIdTarefa // Adiciona o ID do usuário
+          usuarioId: this.usuarioIdTarefa,
         };
         await api.post(`/chamados/${this.chamadoId}/tarefas`, novaTarefa);
         this.tituloTarefa = '';
         this.descricaoTarefa = '';
-        this.usuarioIdTarefa = ''; // Limpa a seleção após adicionar a tarefa
+        this.usuarioIdTarefa = '';
         this.carregarTarefas();
       } catch (error) {
         console.error('Erro ao adicionar tarefa:', error);
@@ -460,8 +459,9 @@ export default {
     this.chamadoId = this.$route.params.id;
     await this.carregarChamado();
     await this.carregarTarefas();
-    await this.carregarUsuarios(); // Carregar usuários ao montar o componente
-    await this.carregarMensagens(); // Carrega as mensagens ao montar o componente
+    await this.carregarUsuarios();
+    await this.carregarMensagens();
   },
 };
 </script>
+
