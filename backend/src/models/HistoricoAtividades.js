@@ -1,14 +1,14 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Mensagem = sequelize.define('Mensagem', {
-  conteudo: {
-    type: DataTypes.TEXT,
+const HistoricoAtividades = sequelize.define('HistoricoAtividades', {
+  acao: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  data_envio: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  detalhes: {
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
   usuarioId: {
     type: DataTypes.INTEGER,
@@ -19,9 +19,8 @@ const Mensagem = sequelize.define('Mensagem', {
     allowNull: false,
   },
 }, {
-  tableName: 'mensagems',
+  tableName: 'historico_atividades',
   timestamps: true,
-  freezeTableName: true,
 });
 
-module.exports = Mensagem;
+module.exports = HistoricoAtividades;

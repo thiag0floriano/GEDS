@@ -321,6 +321,18 @@ export default {
       />
       <button type="submit">Enviar</button>
     </form>
+
+    <h2>Histórico de Atividades</h2>
+    <div v-if="historicoAtividades && historicoAtividades.length">
+      <ul>
+        <li v-for="atividade in historicoAtividades" :key="atividade.id">
+          <strong>{{ atividade.User ? atividade.User.username : 'Usuário desconhecido' }}:</strong>
+          <span>{{ atividade.acao }} - {{ atividade.detalhes }}</span>
+          <small>{{ new Date(atividade.createdAt).toLocaleString() }}</small>
+        </li>
+      </ul>
+    </div>
+    <p v-else>Sem histórico de atividades.</p>
   </div>
 </template>
 
@@ -344,10 +356,12 @@ export default {
       usuarios: [],
       mensagens: [],
       novaMensagem: '',
+      historicoAtividades: [],
     };
   },
   methods: {
     async carregarMensagens() {
+      if (!this.chamadoId) return; // Verifica se chamadoId existe
       try {
         const response = await api.get(`/mensagens/${this.chamadoId}`);
         this.mensagens = response.data;
@@ -454,6 +468,16 @@ export default {
         console.error('Erro ao carregar usuários:', error);
       }
     },
+    async carregarHistorico() {
+      if (!this.chamadoId) return; // Verifica se chamadoId existe
+      try {
+        const response = await api.get(`/chamados/${this.chamadoId}/historico`);
+        console.log('Histórico de atividades carregado:', response.data); // Log para verificar a resposta
+        this.historicoAtividades = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar histórico de atividades:', error);
+      }
+    },
   },
   async mounted() {
     this.chamadoId = this.$route.params.id;
@@ -461,6 +485,8 @@ export default {
     await this.carregarTarefas();
     await this.carregarUsuarios();
     await this.carregarMensagens();
+    await this.carregarHistorico();
+    console.log(this.historicoAtividades);
   },
 };
 </script>

@@ -1,8 +1,9 @@
 const express = require('express');
-const router = express.Router();
 const Mensagem = require('../models/Mensagem');
 const User = require('../models/User');
 const { authenticateToken } = require('../middleware/authMiddleware');
+
+const router = express.Router();
 
 // Rota para obter todas as mensagens de um chamado específico
 router.get('/:chamadoId', authenticateToken, async (req, res) => {
@@ -23,7 +24,7 @@ router.get('/:chamadoId', authenticateToken, async (req, res) => {
 router.post('/:chamadoId', authenticateToken, async (req, res) => {
   const { conteudo } = req.body;
   const { chamadoId } = req.params;
-  const usuarioId = req.user.id;
+  const usuarioId = req.user.userId; // Corrigido para userId
 
   try {
     // Cria a nova mensagem
