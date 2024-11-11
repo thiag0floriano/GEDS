@@ -1,45 +1,27 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User');
-const Chamado = require('./Chamado');
 
-const Mensagem = sequelize.define(
-  'Mensagem',
-  {
-    conteudo: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    data_envio: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    usuarioId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: User,
-        key: 'id',
-      },
-    },
-    chamadoId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Chamado,
-        key: 'id',
-      },
-    },
+const Mensagem = sequelize.define('Mensagem', {
+  conteudo: {
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
-  {
-    tableName: 'mensagems', // Nome da tabela como está no banco de dados
-    timestamps: true,       // Permite createdAt e updatedAt
-    freezeTableName: true,  // Impede o Sequelize de pluralizar o nome da tabela
-  }
-);
-
-// Definir as associações
-Mensagem.belongsTo(User, { foreignKey: 'usuarioId' });
-Mensagem.belongsTo(Chamado, { foreignKey: 'chamadoId' });
+  data_envio: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  chamadoId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+}, {
+  tableName: 'mensagems',
+  timestamps: true,
+  freezeTableName: true,
+});
 
 module.exports = Mensagem;

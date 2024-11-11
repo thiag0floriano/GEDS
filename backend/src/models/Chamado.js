@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Chamado = sequelize.define('Chamado', {
@@ -7,7 +7,7 @@ const Chamado = sequelize.define('Chamado', {
     allowNull: false,
   },
   descricao: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   status: {
@@ -17,6 +17,7 @@ const Chamado = sequelize.define('Chamado', {
   data_abertura: {
     type: DataTypes.DATE,
     allowNull: true,
+    defaultValue: DataTypes.NOW,
   },
   data_fechamento: {
     type: DataTypes.DATE,
@@ -24,20 +25,11 @@ const Chamado = sequelize.define('Chamado', {
   },
   usuarioId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
   },
 }, {
-  tableName: 'chamados' // Define o nome da tabela como 'chamados'
+  tableName: 'chamados',
+  timestamps: true,
 });
 
 module.exports = Chamado;

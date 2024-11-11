@@ -12,7 +12,7 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
-    req.user = { id: user.userId };
+    req.user = { userId: user.userId }; // Ajuste aqui
     next();
   });
 }

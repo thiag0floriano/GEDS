@@ -9,12 +9,30 @@ const tarefaRoutes = require('./routes/tarefas');
 const usuarioRoutes = require('./routes/usuarios');
 const mensagensRoutes = require('./routes/mensagens');
 
+// Importa os modelos
+require('./models/User');
+require('./models/Chamado');
+require('./models/HistoricoAtividades');
+require('./models/Mensagem');
+require('./models/Tarefa');
+
+// Configura as associações
+const setupAssociations = require('./models/associations');
+setupAssociations();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-sequelize.sync().then(() => {
-  console.log('Banco de dados conectado e modelos sincronizados');
-});
+async function syncModels() {
+  try {
+    await sequelize.sync({ force: true });
+    console.log('Todas as tabelas foram recriadas com sucesso!');
+  } catch (error) {
+    console.error('Erro ao sincronizar modelos:', error);
+  }
+}
+
+// syncModels();
 
 app.use(cors({ origin: 'http://localhost:8081' }));
 app.use(bodyParser.json());
