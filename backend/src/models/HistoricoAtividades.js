@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const sequelize = require('../config/database');
 
 const HistoricoAtividades = sequelize.define('HistoricoAtividades', {
@@ -17,6 +17,22 @@ const HistoricoAtividades = sequelize.define('HistoricoAtividades', {
   chamadoId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+    get() {
+      const rawValue = this.getDataValue('createdAt');
+      return rawValue ? new Date(rawValue.getTime() + 3 * 60 * 60 * 1000) : null;
+    },
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+    get() {
+      const rawValue = this.getDataValue('updatedAt');
+      return rawValue ? new Date(rawValue.getTime() + 3 * 60 * 60 * 1000) : null;
+    },
   },
 }, {
   tableName: 'historico_atividades',
