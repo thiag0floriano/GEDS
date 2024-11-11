@@ -4,11 +4,13 @@ import Chamados from '../views/Chamados.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Tarefas from '../views/Tarefas.vue';
+import Relatorios from '../views/Relatorios.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/chamados/:id?', name: 'Chamados', component: Chamados },
   { path: '/tarefas', name: 'Tarefas', component: Tarefas },
+  { path: '/relatorios', name: 'Relatorios', component: Relatorios },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
 ];
@@ -18,6 +20,7 @@ const router = createRouter({
   routes,
 });
 
+// Proteção de rota
 router.beforeEach((to, from, next) => {
   const publicPages = ['/login', '/register'];
   const authRequired = !publicPages.includes(to.path);
@@ -31,3 +34,4 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+

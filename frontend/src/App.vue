@@ -3,6 +3,7 @@
     <nav>
       <router-link to="/">Home</router-link>
       <router-link to="/chamados">Chamado +</router-link>
+      <router-link to="/relatorios">Relatórios</router-link>
     </nav>
     <router-view></router-view>
   </div>
