@@ -111,15 +111,20 @@ export default {
         try {
           const response = await api.get(`/chamados/${this.chamadoId}`);
           const chamado = response.data;
+
+          // Ajuste para corrigir fuso horário para exibição
+          const ajustarFusoHorario = (data) => {
+            if (!data) return "";
+            const date = new Date(data);
+            date.setHours(date.getHours() - 3); // Subtrai 3 horas para ajustar o fuso
+            return date.toISOString().slice(0, 16);
+          };
+
           this.titulo = chamado.titulo;
           this.descricao = chamado.descricao;
           this.status = chamado.status;
-          this.data_abertura = chamado.data_abertura
-            ? chamado.data_abertura.slice(0, 16)
-            : "";
-          this.data_fechamento = chamado.data_fechamento
-            ? chamado.data_fechamento.slice(0, 16)
-            : "";
+          this.data_abertura = ajustarFusoHorario(chamado.data_abertura);
+          this.data_fechamento = ajustarFusoHorario(chamado.data_fechamento);
           this.tarefas = chamado.tarefas || [];
         } catch (error) {
           console.error("Erro ao carregar chamado:", error);
