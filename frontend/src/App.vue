@@ -1,27 +1,3 @@
-<!-- <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/chamados">Chamado +</router-link>
-      <router-link to="/relatorios">Relatórios</router-link>
-    </nav>
-    <router-view></router-view>
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'App',
-};
-</script>
-
-<style>
-nav {
-  display: flex;
-  gap: 10px;
-}
-</style> -->
-
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>

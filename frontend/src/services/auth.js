@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode'
-import router from '../router/index'; // Certifique-se de que o caminho está correto
+import router from '../router/index';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -12,17 +12,15 @@ const isTokenExpired = (token) => {
     return decoded.exp < now;
   } catch (e) {
     console.error('Token decoding failed:', e);
-    return true; // Considera o token como expirado se a decodificação falhar
+    return true; 
   }
 };
 
 const checkToken = () => {
     const token = getToken();
-    console.log('Token:', token); // Adicione este log
     
     if (isTokenExpired(token)) {
         localStorage.removeItem('token');
-        console.log('Token expired, redirecting to /login'); // Adicione isso para depuração
         router.push('/login');
         return false;
     }
