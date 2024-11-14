@@ -2,12 +2,6 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
-createApp(App).use(router).mount('#app');
-
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-
 // Importa Vuetify
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles';
@@ -16,35 +10,18 @@ import '@mdi/font/css/materialdesignicons.css';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
+// Importa vue-the-mask
+import { VueTheMask } from 'vue-the-mask';
+
 const vuetify = createVuetify({
   components,
   directives,
 });
 
-createApp(App).use(router).use(vuetify).mount('#app');
+const app = createApp(App);
 
-// import { createApp } from 'vue';
-// import App from './App.vue';
-// import router from './router';
+app.use(router);
+app.use(vuetify);
+app.use(VueTheMask);
 
-// // Importa Vuetify
-// import { createVuetify } from 'vuetify';
-// import 'vuetify/styles';
-// import '@mdi/font/css/materialdesignicons.css';
-
-// import * as components from 'vuetify/components';
-// import * as directives from 'vuetify/directives';
-
-// // Adicione manualmente os componentes que não estão sendo reconhecidos
-// const vuetify = createVuetify({
-//   components: {
-//     ...components,
-//     VListItemContent: components.VListItemContent,
-//     VListItemTitle: components.VListItemTitle,
-//     VListItemSubtitle: components.VListItemSubtitle,
-//   },
-//   directives,
-// });
-
-// createApp(App).use(router).use(vuetify).mount('#app');
-
+app.mount('#app');
