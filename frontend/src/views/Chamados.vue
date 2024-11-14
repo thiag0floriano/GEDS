@@ -1,143 +1,109 @@
 <template>
-  <div>
-    <h1>{{ chamadoId ? 'Editar Chamado' : 'Criar Chamado' }}</h1>
-    <form @submit.prevent="salvarChamado">
-      <div>
-        <label for="titulo">Título:</label>
-        <input type="text" id="titulo" v-model="titulo" required />
-      </div>
-      <div>
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" v-model="descricao" required></textarea>
-      </div>
-      <div>
-        <label for="status">Status:</label>
-        <input type="text" id="status" v-model="status" required />
-      </div>
-      <div v-if="chamadoId">
-        <label for="data_abertura">Data de Abertura:</label>
-        <input type="datetime-local" id="data_abertura" v-model="data_abertura" disabled />
-      </div>
-      <div v-if="chamadoId">
-        <label for="data_fechamento">Data de Fechamento:</label>
-        <input type="datetime-local" id="data_fechamento" v-model="data_fechamento" />
-      </div>
-      <button type="submit">{{ chamadoId ? 'Salvar' : 'Criar' }} Chamado</button>
-      <button type="button" @click="cancelarEdicao">Cancelar</button>
-    </form>
+  <v-container>
+    <v-row dense>
+      <!-- Componente Editar Chamado -->
+      <v-col cols="12" md="6">
+        <EditarChamado
+          :chamadoId="chamadoId"
+          :titulo="titulo"
+          :descricao="descricao"
+          :status="status"
+          :dataAbertura="data_abertura"
+          :dataFechamento="data_fechamento"
+          :statusOptions="statusOptions"
+          @salvarChamado="salvarChamado"
+          @cancelarEdicao="cancelarEdicao"
+          @update:dataFechamento="(value) => (data_fechamento = value)"
+        />
+      </v-col>
 
-    <h2>Tarefas do Chamado</h2>
-    <ul v-if="tarefas && tarefas.length">
-      <li v-for="tarefa in tarefas" :key="tarefa.id">
-        <h3>{{ tarefa.titulo }}</h3>
-        <p>{{ tarefa.descricao }}</p>
-        <p>Status: {{ tarefa.status }}</p>
-        <button @click="excluirTarefa(tarefa.id)">Excluir</button>
-      </li>
-    </ul>
-    <p v-else>Este chamado ainda não possui tarefas.</p>
+      <!-- Componente Tarefas do Chamado -->
+      <v-col cols="12" md="6">
+        <TarefasChamado
+          :tarefas="tarefas"
+          :usuariosFormatados="usuariosFormatados"
+          v-model:tituloTarefa="tituloTarefa"
+          v-model:descricaoTarefa="descricaoTarefa"
+          v-model:usuarioIdTarefa="usuarioIdTarefa"
+          @adicionarTarefa="adicionarTarefa"
+          @excluirTarefa="excluirTarefa"
+        />
+      </v-col>
+    </v-row>
 
-    <h2>Adicionar Tarefa</h2>
-    <form @submit.prevent="adicionarTarefa">
-      <div>
-        <label for="tituloTarefa">Título:</label>
-        <input type="text" id="tituloTarefa" v-model="tituloTarefa" required />
-      </div>
-      <div>
-        <label for="descricaoTarefa">Descrição:</label>
-        <textarea id="descricaoTarefa" v-model="descricaoTarefa" required></textarea>
-      </div>
-      <div>
-        <label for="usuario">Atribuir a:</label>
-        <select v-model="usuarioIdTarefa" required>
-          <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
-            {{ usuario.username }}
-          </option>
-        </select>
-      </div>
-      <button type="submit">Adicionar Tarefa</button>
-    </form>
+    <v-row dense>
+      <!-- Componente Comunicação Interna -->
+      <v-col cols="12" md="6">
+        <ComunicacaoInterna
+          :mensagens="mensagens"
+          v-model:novaMensagem="novaMensagem"
+          @enviarMensagem="enviarMensagem"
+        />
+      </v-col>
 
-    <h2>Comunicação Interna</h2>
-    <div v-if="mensagens.length">
-      <ul>
-        <li v-for="mensagem in mensagens" :key="mensagem.id">
-          <strong>{{ mensagem.User ? mensagem.User.username : 'Usuário desconhecido' }}:</strong>
-          <span>{{ mensagem.conteudo }}</span>
-          <small>{{ new Date(mensagem.data_envio).toLocaleString() }}</small>
-        </li>
-      </ul>
-    </div>
-    <div v-else>
-      <p>Sem mensagens ainda.</p>
-    </div>
-    <form @submit.prevent="enviarMensagem">
-      <input
-        type="text"
-        v-model="novaMensagem"
-        placeholder="Digite uma mensagem..."
-        required
-      />
-      <button type="submit">Enviar</button>
-    </form>
-
-    <h2>Histórico de Atividades</h2>
-    <div v-if="historicoAtividades && historicoAtividades.length">
-      <ul>
-        <li v-for="atividade in historicoAtividades" :key="atividade.id">
-          <strong>{{ atividade.User ? atividade.User.username : 'Usuário desconhecido' }}:</strong>
-          <span>{{ atividade.acao }} - {{ atividade.detalhes }}</span>
-          <small>{{ new Date(atividade.createdAt).toLocaleString() }}</small>
-        </li>
-      </ul>
-    </div>
-    <p v-else>Sem histórico de atividades.</p>
-  </div>
+      <!-- Componente Histórico de Atividades -->
+      <v-col cols="12" md="6">
+        <HistoricoAtividades :historicoAtividades="historicoAtividades" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import api from '../services/api';
+import api from "../services/api";
+import EditarChamado from "@/components/EditarChamado.vue";
+import TarefasChamado from "@/components/TarefasChamado.vue";
+import ComunicacaoInterna from "@/components/ComunicacaoInterna.vue";
+import HistoricoAtividades from "@/components/HistoricoAtividades.vue";
 
 export default {
-  name: 'ChamadosPage',
+  name: "ChamadosPage",
+  components: {
+    EditarChamado,
+    TarefasChamado,
+    ComunicacaoInterna,
+    HistoricoAtividades,
+  },
   data() {
     return {
       chamadoId: null,
-      titulo: '',
-      descricao: '',
-      status: '',
-      data_abertura: '',
-      data_fechamento: '',
-      tituloTarefa: '',
-      descricaoTarefa: '',
-      usuarioIdTarefa: '',
+      titulo: "",
+      descricao: "",
+      status: "Aberto",
+      data_abertura: "",
+      data_fechamento: "",
+      tituloTarefa: "",
+      descricaoTarefa: "",
+      usuarioIdTarefa: null,
       tarefas: [],
       usuarios: [],
+      usuariosFormatados: [],
       mensagens: [],
-      novaMensagem: '',
+      novaMensagem: "",
       historicoAtividades: [],
+      statusOptions: ["Aberto", "Pendente", "Espera", "Fechado"],
     };
   },
   methods: {
     async carregarMensagens() {
-      if (!this.chamadoId) return; // Verifica se chamadoId existe
+      if (!this.chamadoId) return;
       try {
         const response = await api.get(`/mensagens/${this.chamadoId}`);
         this.mensagens = response.data;
       } catch (error) {
-        console.error('Erro ao carregar mensagens:', error);
+        console.error("Erro ao carregar mensagens:", error);
       }
     },
-    async enviarMensagem() {
-      if (this.novaMensagem.trim() === '') return;
+    async enviarMensagem(mensagem) {
+    if (!mensagem) return; // Verifica se há conteúdo
       try {
         const response = await api.post(`/mensagens/${this.chamadoId}`, {
-          conteudo: this.novaMensagem,
+          conteudo: mensagem,
         });
-        this.mensagens.push(response.data);
-        this.novaMensagem = '';
+        this.mensagens.push(response.data); // Adiciona a nova mensagem à lista
+        this.novaMensagem = ""; // Limpa o campo de nova mensagem
       } catch (error) {
-        console.error('Erro ao enviar mensagem:', error);
+        console.error("Erro ao enviar mensagem:", error);
       }
     },
     async carregarChamado() {
@@ -148,16 +114,26 @@ export default {
           this.titulo = chamado.titulo;
           this.descricao = chamado.descricao;
           this.status = chamado.status;
-          this.data_abertura = chamado.data_abertura ? chamado.data_abertura.slice(0, 16) : '';
-          this.data_fechamento = chamado.data_fechamento ? chamado.data_fechamento.slice(0, 16) : '';
+          this.data_abertura = chamado.data_abertura
+            ? chamado.data_abertura.slice(0, 16)
+            : "";
+          this.data_fechamento = chamado.data_fechamento
+            ? chamado.data_fechamento.slice(0, 16)
+            : "";
           this.tarefas = chamado.tarefas || [];
         } catch (error) {
-          console.error('Erro ao carregar chamado:', error);
-          alert('Erro ao carregar chamado');
+          console.error("Erro ao carregar chamado:", error);
+          alert("Erro ao carregar chamado");
         }
       }
     },
-    async salvarChamado() {
+    async salvarChamado(dadosChamado) {
+      this.titulo = dadosChamado.titulo;
+      this.descricao = dadosChamado.descricao;
+      this.status = dadosChamado.status;
+      this.data_abertura = dadosChamado.dataAbertura;
+      this.data_fechamento = this.status === "Fechado" ? dadosChamado.dataFechamento || new Date().toISOString() : null;
+
       const chamadoData = {
         titulo: this.titulo,
         descricao: this.descricao,
@@ -168,19 +144,19 @@ export default {
       try {
         if (this.chamadoId) {
           await api.put(`/chamados/${this.chamadoId}`, chamadoData);
-          alert('Chamado atualizado com sucesso');
+          alert("Chamado atualizado com sucesso");
         } else {
-          await api.post('/chamados', chamadoData);
-          alert('Chamado criado com sucesso');
+          await api.post("/chamados", chamadoData);
+          alert("Chamado criado com sucesso");
         }
-        this.$router.push('/');
+        this.$router.push("/");
       } catch (error) {
-        console.error('Erro ao salvar chamado:', error);
-        alert('Erro ao salvar chamado');
+        console.error("Erro ao salvar chamado:", error);
+        alert("Erro ao salvar chamado");
       }
     },
     cancelarEdicao() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
     async carregarTarefas() {
       if (this.chamadoId) {
@@ -188,7 +164,7 @@ export default {
           const response = await api.get(`/chamados/${this.chamadoId}/tarefas`);
           this.tarefas = response.data;
         } catch (error) {
-          console.error('Erro ao carregar tarefas:', error);
+          console.error("Erro ao carregar tarefas:", error);
         }
       } else {
         this.tarefas = [];
@@ -196,19 +172,30 @@ export default {
     },
     async adicionarTarefa() {
       try {
+        // Verifique se os campos necessários estão preenchidos
+        if (!this.tituloTarefa || !this.descricaoTarefa || !this.usuarioIdTarefa) {
+          console.error("Por favor, preencha todos os campos da tarefa.");
+          return;
+        }
+
         const novaTarefa = {
           titulo: this.tituloTarefa,
           descricao: this.descricaoTarefa,
-          status: 'pendente',
-          usuarioId: this.usuarioIdTarefa,
+          status: "pendente",
+          usuarioId: this.usuarioIdMap[this.usuarioIdTarefa] // Obtenha o ID do mapeamento
         };
+
         await api.post(`/chamados/${this.chamadoId}/tarefas`, novaTarefa);
-        this.tituloTarefa = '';
-        this.descricaoTarefa = '';
-        this.usuarioIdTarefa = '';
+
+        // Limpar os campos após adicionar a tarefa
+        this.tituloTarefa = "";
+        this.descricaoTarefa = "";
+        this.usuarioIdTarefa = null;
+
+        // Recarregar as tarefas
         this.carregarTarefas();
       } catch (error) {
-        console.error('Erro ao adicionar tarefa:', error);
+        console.error("Erro ao adicionar tarefa:", error);
       }
     },
     async excluirTarefa(tarefaId) {
@@ -216,36 +203,49 @@ export default {
         await api.delete(`/chamados/tarefas/${tarefaId}`);
         this.carregarTarefas();
       } catch (error) {
-        console.error('Erro ao excluir tarefa:', error);
+        console.error("Erro ao excluir tarefa:", error);
       }
     },
     async carregarUsuarios() {
       try {
-        const response = await api.get('/usuarios');
-        this.usuarios = response.data;
+        const response = await api.get("/usuarios");
+        if (response.data && Array.isArray(response.data)) {
+          this.usuariosFormatados = response.data.map(usuario => usuario.username);
+          this.usuarioIdMap = response.data.reduce((map, usuario) => {
+            map[usuario.username] = usuario.id;
+            return map;
+          }, {});
+        }
       } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
+        console.error("Erro ao carregar usuários:", error);
       }
     },
     async carregarHistorico() {
-      if (!this.chamadoId) return; // Verifica se chamadoId existe
+      if (!this.chamadoId) return;
       try {
-        const response = await api.get(`/chamados/${this.chamadoId}/historico`);
-        console.log('Histórico de atividades carregado:', response.data); // Log para verificar a resposta
+        const response = await api.get(
+          `/chamados/${this.chamadoId}/historico`
+        );
         this.historicoAtividades = response.data;
       } catch (error) {
-        console.error('Erro ao carregar histórico de atividades:', error);
+        console.error("Erro ao carregar histórico de atividades:", error);
       }
     },
   },
+
   async mounted() {
+    await this.carregarUsuarios();
     this.chamadoId = this.$route.params.id;
     await this.carregarChamado();
     await this.carregarTarefas();
-    await this.carregarUsuarios();
     await this.carregarMensagens();
     await this.carregarHistorico();
-    console.log(this.historicoAtividades);
   },
 };
 </script>
+
+<style scoped>
+.v-card {
+  margin-bottom: 20px;
+}
+</style>

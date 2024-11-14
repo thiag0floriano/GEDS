@@ -1,17 +1,36 @@
 <template>
-  <div>
-    <h1>Tarefas Atribuídas</h1>
-    <div v-if="tarefas.length">
-      <div v-for="tarefa in tarefas" :key="tarefa.id" class="tarefa-item">
-        <h3>{{ tarefa.titulo }}</h3>
-        <p>{{ tarefa.descricao }}</p>
-        <p>Status: {{ tarefa.status }}</p>
-        <button @click="alterarStatus(tarefa.id, 'Concluída')">Marcar como Concluída</button>
-        <button @click="excluirTarefa(tarefa.id)">Excluir Tarefa</button>
-      </div>
-    </div>
-    <p v-else>Você não tem tarefas atribuídas.</p>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col cols="12" class="text-center">
+        <h1>Tarefas Atribuídas</h1>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="tarefas.length">
+      <v-col v-for="tarefa in tarefas" :key="tarefa.id" cols="12" md="6" lg="4">
+        <v-card outlined class="mb-4">
+          <v-card-title>{{ tarefa.titulo }}</v-card-title>
+          <v-card-subtitle>Status: {{ tarefa.status }}</v-card-subtitle>
+          <v-card-text>{{ tarefa.descricao }}</v-card-text>
+
+          <v-card-actions>
+            <v-btn color="success" @click="alterarStatus(tarefa.id, 'Concluída')" text>
+              Marcar como Concluída
+            </v-btn>
+            <v-btn color="error" @click="excluirTarefa(tarefa.id)" text>
+              Excluir Tarefa
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row v-else>
+      <v-col cols="12" class="text-center">
+        <p>Você não tem tarefas atribuídas.</p>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -53,19 +72,19 @@ export default {
         console.error('Erro ao excluir tarefa:', error);
         alert('Erro ao excluir tarefa');
       }
-    }
+    },
   },
   async mounted() {
     await this.carregarTarefas();
-  }
+  },
 };
 </script>
 
 <style scoped>
-  .tarefa-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0;
-  }
+.v-card {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 </style>
-  

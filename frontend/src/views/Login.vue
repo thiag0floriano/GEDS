@@ -1,25 +1,36 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <form @submit.prevent="login">
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" v-model="username" required>
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <!-- Exibir a diferença de tempo -->
-    <p v-if="timeDifference !== null">Server time difference: {{ timeDifference }} seconds</p>
+  <div class="login-container">
+    <v-card class="login-card" outlined>
+      <v-img
+        src="@/assets/geds-logo.png"
+        alt="Logo GEDS"
+        class="login-card__image"
+        height="150"
+      ></v-img>
+      <v-card-title class="text-center">Acesse o GEDS</v-card-title>
+      <v-card-text>
+        <v-form @submit.prevent="login" class="login-form">
+          <v-text-field
+            label="Usuário"
+            v-model="username"
+            required
+          ></v-text-field>
+          <v-text-field
+            label="Senha"
+            v-model="password"
+            type="password"
+            required
+          ></v-text-field>
+          <v-btn type="submit" color="primary" class="mt-4">Entrar</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
-  
+
 <script>
 import api from '../services/api';
-import auth from '../services/auth'; // Certifique-se de usar `auth` se necessário
+import auth from '../services/auth';
 
 export default {
   name: 'LoginPage',
@@ -32,7 +43,6 @@ export default {
   },
   methods: {
     async login() {
-      // Verifica se o token já está presente e é válido
       if (auth.checkToken()) {
         this.$router.push('/');
         return;
@@ -42,7 +52,6 @@ export default {
         const serverTimeResponse = await api.get('/server-time');
         const serverTime = new Date(serverTimeResponse.data.serverTime).getTime();
         const clientTime = new Date().getTime();
-        
         this.timeDifference = Math.abs((serverTime - clientTime) / 1000);
 
         const response = await api.post('/auth/login', {
@@ -50,18 +59,32 @@ export default {
           password: this.password,
         });
 
-        console.log('Login response:', response.data); // Adicione este log
-
-
         localStorage.setItem('token', response.data.token);
-        console.log('Token stored:', localStorage.getItem('token')); // Verifique se o token é armazenado
         this.$router.push('/');
       } catch (error) {
         console.error('Error logging in:', error);
-        alert('Invalid username or password');
+        alert('Usuário ou senha inválidos');
       }
     },
   },
 };
 </script>
-   
+
+<style scoped>
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to right, #f0f2f5, #ffffff);
+  overflow: hidden;
+}
+.login-card {
+  width: 400px;
+  max-width: 90%;
+  padding-bottom: 2rem;
+}
+.login-card__image {
+  border-radius: 8px 8px 0 0;
+}
+</style>
