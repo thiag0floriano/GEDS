@@ -1,6 +1,22 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/authMiddleware');
+
+// Rota para obter os dados do usuário logado
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Recupera o ID do usuário logado do token JWT
+    const user = await User.findByPk(userId, { attributes: ['id', 'username', 'nome'] });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Erro ao obter usuário logado:', error);
+    res.status(500).json({ error: 'Erro ao obter usuário logado' });
+  }
+});
 
 // Rota para obter todos os usuários com os novos campos
 router.get('/usuarios', async (req, res) => {

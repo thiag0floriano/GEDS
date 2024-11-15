@@ -3,6 +3,7 @@ const Chamado = require('./Chamado');
 const HistoricoAtividades = require('./HistoricoAtividades');
 const Mensagem = require('./Mensagem');
 const Tarefa = require('./Tarefa');
+const Categoria = require('./Categoria'); // Novo modelo de Categoria
 
 function setupAssociations() {
   // Associações para o modelo User
@@ -16,6 +17,10 @@ function setupAssociations() {
   Chamado.hasMany(HistoricoAtividades, { foreignKey: 'chamadoId' });
   Chamado.hasMany(Mensagem, { foreignKey: 'chamadoId' });
   Chamado.hasMany(Tarefa, { foreignKey: 'chamadoId' });
+  
+  // Associação entre Chamado e Categoria
+  Chamado.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
+  Categoria.hasMany(Chamado, { foreignKey: 'categoriaId' });
 
   // Associações para os demais modelos
   HistoricoAtividades.belongsTo(User, { foreignKey: 'usuarioId' });

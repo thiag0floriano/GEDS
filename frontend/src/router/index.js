@@ -6,6 +6,7 @@ import Register from '../views/Register.vue';
 import Tarefas from '../views/Tarefas.vue';
 import Relatorios from '../views/Relatorios.vue';
 import Usuarios from '../views/Usuarios.vue';
+import NovoChamado from '../views/NovoChamado.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
   { path: '/usuarios', name: 'Usuarios', component: Usuarios },
+  { path: '/novo-chamado', name: 'NovoChamado', component: NovoChamado },
 ];
 
 const router = createRouter({

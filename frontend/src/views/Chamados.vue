@@ -2,14 +2,17 @@
   <v-container>
     <v-row dense>
       <!-- Componente Editar Chamado -->
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="8">
         <EditarChamado
           :chamadoId="chamadoId"
           :titulo="titulo"
           :descricao="descricao"
           :status="status"
-          :dataAbertura="data_abertura"
-          :dataFechamento="data_fechamento"
+          :dataAbertura="data_abertura ? data_abertura.toString() : ''"
+          :dataFechamento="data_fechamento ? data_fechamento.toString() : ''"
+          :abertoPor="abertoPor ? abertoPor.toString() : ''"
+          :solicitadoPor="solicitadoPor ? solicitadoPor.toString() : ''"
+          :protocolo="protocolo ? protocolo.toString() : ''"
           :statusOptions="statusOptions"
           @salvarChamado="salvarChamado"
           @cancelarEdicao="cancelarEdicao"
@@ -18,8 +21,9 @@
       </v-col>
 
       <!-- Componente Tarefas do Chamado -->
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="4" class="d-flex">
         <TarefasChamado
+          class="tarefas-container flex-grow-1"
           :tarefas="tarefas"
           :usuariosFormatados="usuariosFormatados"
           v-model:tituloTarefa="tituloTarefa"
@@ -33,17 +37,22 @@
 
     <v-row dense>
       <!-- Componente Comunicação Interna -->
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="d-flex">
         <ComunicacaoInterna
+          class="comunicacao-interna flex-grow-1"
           :mensagens="mensagens"
+          :usuarioAtual="usuarioAtual"
           v-model:novaMensagem="novaMensagem"
           @enviarMensagem="enviarMensagem"
         />
       </v-col>
 
       <!-- Componente Histórico de Atividades -->
-      <v-col cols="12" md="6">
-        <HistoricoAtividades :historicoAtividades="historicoAtividades" />
+      <v-col cols="12" md="6" class="d-flex">
+        <HistoricoAtividades
+          class="historico-atividades flex-grow-1"
+          :historicoAtividades="historicoAtividades"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -82,6 +91,7 @@ export default {
       novaMensagem: "",
       historicoAtividades: [],
       statusOptions: ["Aberto", "Pendente", "Espera", "Fechado"],
+      usuarioAtual: "",
     };
   },
   methods: {
@@ -111,7 +121,8 @@ export default {
         try {
           const response = await api.get(`/chamados/${this.chamadoId}`);
           const chamado = response.data;
-
+          console.log("Dados do chamado após carregar:", chamado);
+          
           // Ajuste para corrigir fuso horário para exibição
           const ajustarFusoHorario = (data) => {
             if (!data) return "";
@@ -125,6 +136,9 @@ export default {
           this.status = chamado.status;
           this.data_abertura = ajustarFusoHorario(chamado.data_abertura);
           this.data_fechamento = ajustarFusoHorario(chamado.data_fechamento);
+          this.abertoPor = chamado.abertoPor ? chamado.abertoPor.toString() : "";
+          this.solicitadoPor = chamado.solicitadoPor ? chamado.solicitadoPor.toString() : "";
+          this.protocolo = chamado.protocolo ? chamado.protocolo.toString() : "";
           this.tarefas = chamado.tarefas || [];
         } catch (error) {
           console.error("Erro ao carregar chamado:", error);
@@ -225,6 +239,15 @@ export default {
         console.error("Erro ao carregar usuários:", error);
       }
     },
+    async carregarUsuarioAtual() {
+      try {
+        const response = await api.get('/usuarios/me'); // Rota para obter os dados do usuário logado
+        this.usuarioAtual = response.data.username; // Ajuste o campo conforme sua estrutura de usuário
+        console.log("Usuário atual:", this.usuarioAtual);
+      } catch (error) {
+        console.error("Erro ao carregar usuário atual:", error);
+      }
+    },
     async carregarHistorico() {
       if (!this.chamadoId) return;
       try {
@@ -239,6 +262,7 @@ export default {
   },
 
   async mounted() {
+    await this.carregarUsuarioAtual();
     await this.carregarUsuarios();
     this.chamadoId = this.$route.params.id;
     await this.carregarChamado();
@@ -246,11 +270,49 @@ export default {
     await this.carregarMensagens();
     await this.carregarHistorico();
   },
+  watch: {
+    titulo(newVal) {
+      this.titulo = newVal;
+    },
+    descricao(newVal) {
+      this.descricao = newVal;
+    },
+    status(newVal) {
+      this.status = newVal;
+    },
+    data_abertura(newVal) {
+      this.data_abertura = newVal;
+    },
+    data_fechamento(newVal) {
+      this.data_fechamento = newVal;
+    },
+    abertoPor(newVal) {
+      this.abertoPor = newVal;
+    },
+    solicitadoPor(newVal) {
+      this.solicitadoPor = newVal;
+    },
+    protocolo(newVal) {
+      this.protocolo = newVal;
+    }
+  },
 };
 </script>
 
 <style scoped>
+.comunicacao-interna,
+.historico-atividades {
+  height: 400px; /* Define uma altura fixa */
+}
+
 .v-card {
   margin-bottom: 20px;
+}
+
+.tarefas-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 97%; /* Ajusta a altura para coincidir com o card */
 }
 </style>

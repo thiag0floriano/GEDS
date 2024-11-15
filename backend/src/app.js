@@ -44,6 +44,7 @@ app.use('/api/tarefas', tarefaRoutes);
 app.use('/api', usuarioRoutes);
 app.use('/api/mensagens', mensagensRoutes);
 app.use('/api/relatorios', relatorioRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
