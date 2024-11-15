@@ -7,7 +7,6 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Rota para obter chamados
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const chamados = await Chamado.findAll();
@@ -28,6 +27,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Chamado não encontrado' });
     }
 
+    console.log("Dados do chamado:", chamado); // Adicionado para depuração
     res.json(chamado);
   } catch (error) {
     console.error('Erro ao obter o chamado:', error);
@@ -61,13 +61,17 @@ router.get('/:id/historico', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Erro ao obter histórico de atividades' });
   }
 });
-
 // Rota para criar um chamado
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { titulo, descricao, status, data_abertura, data_fechamento } = req.body;
+    const { titulo, descricao, status, data_abertura, data_fechamento, solicitadoPor, categoriaId } = req.body;
     const usuarioId = req.user.userId;
 
+    // Busca o nome do usuário para preencher o campo "abertoPor"
+    const usuario = await User.findByPk(usuarioId, { attributes: ['nome'] });
+    const abertoPor = usuario ? usuario.nome : 'Desconhecido';
+
+    // Criação do chamado com os novos campos
     const chamado = await Chamado.create({
       titulo,
       descricao,
@@ -75,9 +79,13 @@ router.post('/', authenticateToken, async (req, res) => {
       data_abertura: data_abertura || new Date(),
       data_fechamento,
       usuarioId,
+      abertoPor,     // Nome do usuário que abriu o chamado
+      solicitadoPor, // Nome do solicitante
+      protocolo: req.body.protocolo,  // Protocolo recebido do frontend
+      categoriaId, 
     });
 
-    // Registrar atividade de criação
+    // Registrar atividade de criação no histórico
     await HistoricoAtividades.create({
       acao: 'Criação',
       detalhes: `Chamado criado com o título: ${chamado.titulo}`,
@@ -91,7 +99,6 @@ router.post('/', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Erro ao criar chamado' });
   }
 });
-
 // Criar uma nova tarefa para um chamado específico
 router.post('/:chamadoId/tarefas', authenticateToken, async (req, res) => {
   const { chamadoId } = req.params;

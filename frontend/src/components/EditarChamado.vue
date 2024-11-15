@@ -1,51 +1,99 @@
 <template>
-  <v-card outlined>
-    <v-card-title>{{ chamadoId ? "Editar Chamado" : "Criar Chamado" }}</v-card-title>
+  <v-card outlined class="pa-4">
+    <!-- Título e Protocolo -->
+    <v-card-title class="d-flex justify-space-between">
+      <div>{{ chamadoId ? "Editar Chamado" : "Criar Chamado" }}</div>
+      <div v-if="chamadoId" class="text-subtitle-2 grey--text">{{ `ID - ${localProtocolo}` }}</div>
+    </v-card-title>
+
     <v-card-text>
-      <v-form @submit.prevent="onSalvarChamado">
-        <v-text-field
-          label="Título"
-          v-model="localTitulo"
-          required
-        ></v-text-field>
-        
-        <v-textarea
-          label="Descrição"
-          v-model="localDescricao"
-          required
-        ></v-textarea>
+      <v-form @submit.prevent="onSalvarChamado" class="form-spacing">
+        <!-- Aberto Por e Solicitado Por -->
+        <v-row dense class="mt-4">
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Aberto por"
+              v-model="localAbertoPor"
+              readonly
+              class="mt-4"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Solicitado por"
+              v-model="localSolicitadoPor"
+              class="mt-4"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-        <v-select
-          v-if="chamadoId"
-          label="Status"
-          v-model="localStatus"
-          :items="statusOptions"
-          @change="onStatusChange"
-          required
-        ></v-select>
+        <!-- Título e Status -->
+        <v-row dense>
+          <v-col cols="12" md="8">
+            <v-text-field
+              label="Título"
+              v-model="localTitulo"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              label="Status"
+              v-model="localStatus"
+              :items="statusOptions"
+              @change="onStatusChange"
+              required
+            ></v-select>
+          </v-col>
+        </v-row>
 
-        <v-text-field
-          label="Data de Abertura"
-          v-model="formattedDataAbertura"
-          readonly
-          v-if="chamadoId"
-        ></v-text-field>
+        <!-- Descrição -->
+        <v-row dense>
+          <v-col cols="12">
+            <v-textarea
+              label="Descrição"
+              v-model="localDescricao"
+              required
+            ></v-textarea>
+          </v-col>
+        </v-row>
 
-        <v-text-field
-          label="Data de Fechamento"
-          v-model="formattedDataFechamento"
-          readonly
-          v-if="chamadoId && localDataFechamento"
-        ></v-text-field>
+        <!-- Data de Abertura e Fechamento -->
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Data de Abertura"
+              v-model="formattedDataAbertura"
+              readonly
+              v-if="chamadoId"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Data de Fechamento"
+              v-model="formattedDataFechamento"
+              readonly
+              v-if="chamadoId && localDataFechamento"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-        <v-btn color="primary" type="submit">
-          {{ chamadoId ? "Salvar" : "Criar" }} Chamado
-        </v-btn>
-        <v-btn color="secondary" @click="cancelarEdicao">Cancelar</v-btn>
+        <!-- Botões -->
+        <v-row dense>
+          <v-col cols="12" class="d-flex justify-end">
+            <v-btn color="primary" type="submit">
+              {{ chamadoId ? "Salvar" : "Criar" }} Chamado
+            </v-btn>
+            <v-btn color="secondary" @click="cancelarEdicao" class="ml-2">
+              Cancelar
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-form>
     </v-card-text>
   </v-card>
 </template>
+
 
 <script>
 export default {
@@ -57,6 +105,9 @@ export default {
     status: String,
     dataAbertura: String,
     dataFechamento: String,
+    abertoPor: String,
+    solicitadoPor: String,
+    protocolo: String,
     statusOptions: Array,
   },
   data() {
@@ -66,6 +117,9 @@ export default {
       localStatus: this.status,
       localDataAbertura: this.dataAbertura,
       localDataFechamento: this.dataFechamento,
+      localAbertoPor: this.abertoPor || "",
+      localSolicitadoPor: this.solicitadoPor || "",
+      localProtocolo: this.protocolo || "",
     };
   },
   computed: {
@@ -94,15 +148,16 @@ export default {
         status: this.localStatus,
         dataAbertura: this.localDataAbertura,
         dataFechamento: this.localDataFechamento,
+        solicitadoPor: this.localSolicitadoPor,
       });
     },
     onStatusChange() {
       if (this.localStatus === "Fechado") {
         const agora = new Date();
-        this.localDataFechamento = agora.toISOString(); // Formato ISO completo
+        this.localDataFechamento = agora.toISOString();
         this.$emit("update:dataFechamento", this.localDataFechamento);
       } else {
-        this.localDataFechamento = null; // Define como null
+        this.localDataFechamento = null;
         this.$emit("update:dataFechamento", this.localDataFechamento);
       }
     },
@@ -137,6 +192,15 @@ export default {
     dataFechamento(newVal) {
       this.localDataFechamento = newVal;
     },
+    abertoPor(newVal) {
+      this.localAbertoPor = newVal;
+    },
+    solicitadoPor(newVal) {
+      this.localSolicitadoPor = newVal;
+    },
+    protocolo(newVal) {
+      this.localProtocolo = newVal;
+    }
   },
 };
 </script>
@@ -144,5 +208,10 @@ export default {
 <style scoped>
 .v-card {
   margin-bottom: 20px;
+}
+.v-card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

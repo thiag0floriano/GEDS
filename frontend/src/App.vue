@@ -7,8 +7,29 @@
       </template>
       <v-spacer></v-spacer>
       <v-btn v-if="!isLoginPage" to="/" text>Home</v-btn>
-      <v-btn v-if="!isLoginPage" to="/chamados" text>Chamado +</v-btn>
-      <v-btn v-if="!isLoginPage" to="/relatorios" text>Relatórios</v-btn>
+      <v-btn v-if="!isLoginPage" to="/novo-chamado" text>Chamado +</v-btn>
+      <v-btn v-if="!isLoginPage" to="/tarefas" text>Tarefas</v-btn>
+
+      <!-- Ícone de Configurações -->
+      <v-menu v-if="!isLoginPage" offset-y>
+        <template v-slot:activator="{ props }">
+          <v-btn icon v-bind="props">
+            <v-icon>mdi-cog-outline</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item link to="/usuarios">
+            <v-list-item-title>Usuários</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/relatorios">
+            <v-list-item-title>Relatórios</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/configuracoes">
+            <v-list-item-title>Configurações</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <v-btn v-if="!isLoginPage" @click="logout" text>Sair</v-btn>
     </v-app-bar>
     <v-main>
@@ -36,7 +57,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.v-app-bar {
+  z-index: 10;
+}
+
 #app {
   font-family: 'Roboto', sans-serif;
 }
