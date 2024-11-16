@@ -18,8 +18,8 @@ function setupAssociations() {
   Chamado.hasMany(Mensagem, { foreignKey: 'chamadoId' });
   Chamado.hasMany(Tarefa, { foreignKey: 'chamadoId' });
   
-  // Associação entre Chamado e Categoria
-  Chamado.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
+  // Associação entre Chamado e Categoria com onDelete: 'SET NULL'
+  Chamado.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria', onDelete: 'SET NULL' });
   Categoria.hasMany(Chamado, { foreignKey: 'categoriaId' });
 
   // Associações para os demais modelos
