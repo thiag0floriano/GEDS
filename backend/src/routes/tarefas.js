@@ -1,6 +1,8 @@
 const express = require('express');
 const Tarefa = require('../models/Tarefa');
+const User = require('../models/User');
 const router = express.Router();
+
 
 // Rota para criar uma tarefa
 router.post('/', async (req, res) => {
@@ -13,11 +15,27 @@ router.post('/', async (req, res) => {
 });
 
 // Rota para listar todas as tarefas
+// router.get('/', async (req, res) => {
+//   try {
+//     const tarefas = await Tarefa.findAll();
+//     res.json(tarefas);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Erro ao obter tarefas' });
+//   }
+// });
 router.get('/', async (req, res) => {
   try {
-    const tarefas = await Tarefa.findAll();
+    const tarefas = await Tarefa.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ['username'], // Inclui apenas o username do usuário
+        },
+      ],
+    });
     res.json(tarefas);
   } catch (error) {
+    console.error('Erro ao obter tarefas:', error);
     res.status(500).json({ error: 'Erro ao obter tarefas' });
   }
 });

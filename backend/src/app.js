@@ -9,6 +9,7 @@ const tarefaRoutes = require('./routes/tarefas');
 const usuarioRoutes = require('./routes/usuarios');
 const mensagensRoutes = require('./routes/mensagens');
 const relatorioRoutes = require('./routes/relatorios');
+const categoriasRoutes = require('./routes/categorias');
 
 // Importa os modelos
 require('./models/User');
@@ -45,6 +46,7 @@ app.use('/api', usuarioRoutes);
 app.use('/api/mensagens', mensagensRoutes);
 app.use('/api/relatorios', relatorioRoutes);
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/categorias', categoriasRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
