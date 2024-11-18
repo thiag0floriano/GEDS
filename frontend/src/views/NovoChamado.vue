@@ -71,8 +71,6 @@ export default {
           map[categoria.nome] = categoria.id;
           return map;
         }, {});
-        console.log("Categorias formatadas para exibição:", this.categoriasFormatadas);
-        console.log("Mapa de IDs das categorias:", this.categoriaIdMap);
       }
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
@@ -90,8 +88,6 @@ export default {
                 protocolo: this.protocolo,
                 categoriaId: this.categoriaIdMap[this.categoriaSelecionada], // Obtém o ID da categoria
             };
-
-            console.log("Dados do novo chamado a serem enviados:", novoChamado); // Verifica os dados antes de enviar
 
             try {
                 await api.post("/chamados", novoChamado);

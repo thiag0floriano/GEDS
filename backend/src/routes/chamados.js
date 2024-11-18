@@ -9,8 +9,12 @@ const router = express.Router();
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const chamados = await Chamado.findAll();
-    res.send(chamados);
+    // const chamados = await Chamado.findAll();
+    // res.send(chamados);
+    const chamados = await Chamado.findAll({
+      include: [{ model: User, attributes: ['username'] }],
+    });
+    res.json(chamados);
   } catch (error) {
     console.error('Erro ao obter chamados:', error);
     res.status(500).send({ error: 'Erro ao obter chamados' });
