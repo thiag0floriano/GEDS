@@ -151,7 +151,7 @@ export default {
     },
 
     irParaRegistro() {
-      this.$router.push("/registrar");
+      this.$router.push("/Register");
     },
 
     async deletarUsuario(usuarioId) {
